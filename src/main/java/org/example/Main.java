@@ -63,18 +63,10 @@ public class Main  {
             int oldX = x;
             int oldY = y;
             switch (type) {
-                case ArrowDown:
-                    y += 1;
-                    break;
-                case ArrowUp:
-                    y -= 1;
-                    break;
-                case ArrowLeft:
-                    x -= 1;
-                    break;
-                case ArrowRight:
-                    x += 1;
-                    break;
+                case ArrowDown -> y += 1;
+                case ArrowUp -> y -= 1;
+                case ArrowLeft -> x -= 1;
+                case ArrowRight -> x += 1;
             }
 
             if (wall.contains(new Position(x,y))){
