@@ -31,10 +31,14 @@ public class Main  {
 
         int x = 20;
         int y = 20;
-        int cPoint = '1';
-        char point = (char)cPoint;
+        int hundratal = '1';
+        int tiotal = '1';
+        int ental = '1';
+        char pten = (char)tiotal;
+        char point = (char)ental;
+        char phun = (char)hundratal;
         final char snakeHead = '\u2662';
-        final char target = '\u2666' ;  // '\u2766'☃
+        final char target = '\u2766' ;  // '\u2766'☃♦
         final char block = '\u2588';
         KeyStroke latestKeyStroke = null;
         boolean continueReadingInput = true;
@@ -65,7 +69,7 @@ public class Main  {
 
                 index++;
                 if (index % 25 == 0) {
-                    if (latestKeyStroke != null) {
+                    if (latestKeyStroke != null) {  // Autowalk
                         KeyType lType = latestKeyStroke.getKeyType();
                         switch (lType) {
                             case ArrowDown -> y += 1;
@@ -73,14 +77,14 @@ public class Main  {
                             case ArrowLeft -> x -= 1;
                             case ArrowRight -> x += 1;
                         }
-                        if (wall.contains(new Position(x, y))) {
+                        if (wall.contains(new Position(x, y))) { // crashinto wall = death
                             continueReadingInput = false;
                             System.out.println("Death");
                             latestKeyStroke = null;
-                        } else if (snake.contains(new Position(x,y))){
+                        } else if (snake.contains(new Position(x,y))){ // crashinto self = death
                             continueReadingInput = false;
                             System.out.println("Death");
-                        } else if (snake.contains(tarPos)) {
+                        } else if (snake.contains(tarPos)) { // Eats, grows and Point+1
                             snake.add(0,new Position(x,y));
                             setPutSnakehead(snake, snakeHead);
                             tarPos = new Position(r.nextInt(16,78), r.nextInt(1,22));
@@ -91,9 +95,31 @@ public class Main  {
                             terminal.setCursorPosition(9,1);
                             terminal.putCharacter(point);
                             terminal.setForegroundColor(RED);
-                            cPoint++;
-                            point = (char)cPoint;
-                        } else {
+                            if ((char)ental == '9') {
+                                ental = '/';
+                            }
+                            if (ental == '0') {
+                                if ((char)tiotal == '9') {
+                                    tiotal = '/';
+                                }
+                                terminal.setCursorPosition(8,1);
+                                terminal.setForegroundColor(GREEN);
+                                terminal.putCharacter(pten);
+                                terminal.setForegroundColor(RED);
+                                tiotal++;
+                                pten = (char) tiotal;
+                                if (tiotal == '1') {
+                                    terminal.setCursorPosition(7,1);
+                                    terminal.setForegroundColor(GREEN);
+                                    terminal.putCharacter(phun);
+                                    terminal.setForegroundColor(RED);
+                                    hundratal++;
+                                    phun = (char) hundratal;
+                                }
+                            }
+                            ental++;
+                            point = (char)ental;
+                        } else { // Take step (add head, remove tail)
                             snake.add(0,new Position(x,y));
                             setPutSnakehead(snake, snakeHead);
                             terminal.setCursorPosition(snake.get(snake.size()-1));
@@ -103,50 +129,14 @@ public class Main  {
                         terminal.flush();
                     }
                 }
-                Thread.sleep(5); // might throw InterruptedException
+                Thread.sleep(5);
                 keyStroke = terminal.pollInput();
             } while (keyStroke == null);
             latestKeyStroke = keyStroke;
             Character c = keyStroke.getCharacter();
 
-//            KeyType type = keyStroke.getKeyType();
-//            int oldX = x;
-//            int oldY = y;
-//            switch (type) {
-//                case ArrowDown -> y += 1;
-//                case ArrowUp -> y -= 1;
-//                case ArrowLeft -> x -= 1;
-//                case ArrowRight -> x += 1;
-//            }
-//
-//            if (wall.contains(new Position(x, y))) {
-//                x = oldX;
-//                y = oldY;
-//                terminal.setCursorPosition(snake.get(1));
-//                terminal.putCharacter(snakeHead);
-//                continueReadingInput = false;
-//                System.out.println("Death");
-//            } else if (snake.contains(new Position(x,y))){
-//                continueReadingInput = false;
-//                System.out.println("Death");
-//            } else if (snake.contains(tarPos)) {
-//                snake.add(0,new Position(x,y));
-//                setPutSnakehead(snake, snakeHead);
-//                tarPos = new Position(r.nextInt(16,78), r.nextInt(1,22));
-//                terminal.setCursorPosition(tarPos.x,tarPos.y);
-//                terminal.putCharacter(target);
-//                terminal.setCursorPosition(8,1);
-//                terminal.putCharacter(point);
-//                cPoint++;
-//                point = (char)cPoint;
-//            } else {
-//                snake.add(0,new Position(x,y));
-//                setPutSnakehead(snake, snakeHead);
-//                terminal.setCursorPosition(snake.get(snake.size()-1));
-//                terminal.putCharacter(' ');
-//                snake.remove(snake.size()-1);
-//            }
-            if (c == Character.valueOf('q')) {
+
+            if (c == Character.valueOf('q')) { //Quit the game
                 continueReadingInput = false;
                 System.out.println("QUIT");
                 terminal.close();
