@@ -1,5 +1,6 @@
 package org.example;
 
+import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Random;
 
 import static com.googlecode.lanterna.TextColor.ANSI.*;
+import static java.awt.Color.ORANGE;
 
 public class Main  {
     static DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory();
@@ -27,10 +29,9 @@ public class Main  {
 
     public static void main(String[] args) throws Exception  {
 
-
-// HEJ
         int x = 20;
         int y = 20;
+        int moduloMod = 25;
         int hundratal = '1';
         int tiotal = '1';
         int ental = '1';
@@ -38,18 +39,19 @@ public class Main  {
         char point = (char)ental;
         char phun = (char)hundratal;
         final char snakeHead = '\u2662';
-        final char target = '\u2766' ;  // '\u2766'☃♦
+        final char target = '\u2766' ;  // ☃♦
         final char block = '\u2588';
         KeyStroke latestKeyStroke = null;
         boolean continueReadingInput = true;
         String s = "SCORE 000";
+        String lose = "GAME OVER";
+        String creator = "Creators:";
+        String names = "Mia, Martin, Tony";
         terminal.setCursorVisible(false);
         Random r = new Random();
         List<Position> wall = new ArrayList<>();
         List<Position> snake = new ArrayList<>(List.of(new Position(x, y)));
         Position tarPos = new Position(r.nextInt(16,78), r.nextInt(1,22));
-        Position tarPos2 = new Position(r.nextInt(16,78), r.nextInt(1,22));
-
 
         printWall(wall,block);
         terminal.setForegroundColor(GREEN);
@@ -60,15 +62,12 @@ public class Main  {
         terminal.setForegroundColor(RED);
         printSnake(snake, snakeHead);
 
-
-
         while (continueReadingInput) {
             int index = 0;
             KeyStroke keyStroke = null;
             do {
-
                 index++;
-                if (index % 25 == 0) {
+                if (index % moduloMod == 0) {
                     if (latestKeyStroke != null) {  // Autowalk
                         KeyType lType = latestKeyStroke.getKeyType();
                         switch (lType) {
@@ -79,10 +78,12 @@ public class Main  {
                         }
                         if (wall.contains(new Position(x, y))) { // crashinto wall = death
                             continueReadingInput = false;
+                            printGameOver(lose,creator,names);
                             System.out.println("Death");
                             latestKeyStroke = null;
                         } else if (snake.contains(new Position(x,y))){ // crashinto self = death
                             continueReadingInput = false;
+                            printGameOver(lose,creator,names);
                             System.out.println("Death");
                         } else if (snake.contains(tarPos)) { // Eats, grows and Point+1
                             snake.add(0,new Position(x,y));
@@ -97,6 +98,9 @@ public class Main  {
                             terminal.setForegroundColor(RED);
                             if ((char)ental == '9') {
                                 ental = '/';
+                                if(moduloMod > 10){
+                                    moduloMod-=5;
+                                }
                             }
                             if (ental == '0') {
                                 if ((char)tiotal == '9') {
@@ -144,6 +148,24 @@ public class Main  {
             terminal.flush();
         }
 
+    }
+
+    private static void printGameOver(String lose, String creator,String names) throws IOException {
+        for (int i = 0; i < lose.length(); i++) {
+            terminal.setCursorPosition(i+40, 10);
+            terminal.setForegroundColor(RED);
+            terminal.putCharacter(lose.charAt(i));
+        }
+        for (int i = 0; i < creator.length(); i++) {
+            terminal.setCursorPosition(i+40, 12);
+            terminal.setForegroundColor(YELLOW);
+            terminal.putCharacter(creator.charAt(i));
+        }
+        for (int i = 0; i < names.length(); i++) {
+            terminal.setCursorPosition(i+36, 14);
+            terminal.setForegroundColor(YELLOW);
+            terminal.putCharacter(names.charAt(i));
+        }
     }
 
     private static void setPutSnakehead(List<Position> snake, char snakeHead) throws IOException {
