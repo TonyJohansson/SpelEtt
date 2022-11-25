@@ -34,14 +34,16 @@ public class Main  {
         final char snakeHead = '\u2662';
         final char target = '\u2666' ;  // '\u2766'☃
         final char block = '\u2588';
+        KeyStroke latestKeyStroke = null;
         boolean continueReadingInput = true;
         String s = "SCORE  0";
         terminal.setCursorVisible(false);
-        List<Position> wall = new ArrayList<>();
-        List<Position> snake = new ArrayList<>(Arrays.asList(new Position(x,y),new Position(x-1,y), new Position(x-2,y)));
-
-
         Random r = new Random();
+        List<Position> wall = new ArrayList<>();
+        List<Position> snake = new ArrayList<>(List.of(new Position(x, y)));
+
+
+
         Position tarPos = new Position(r.nextInt(16,78), r.nextInt(1,22));
         terminal.setCursorPosition(tarPos.x, tarPos.y);
         terminal.putCharacter(target);
@@ -52,52 +54,99 @@ public class Main  {
 
 
         while (continueReadingInput) {
+            int index = 0;
             KeyStroke keyStroke = null;
             do {
+
+                index++;
+                if (index % 25 == 0) {
+                    if (latestKeyStroke != null) {
+                        KeyType lType = latestKeyStroke.getKeyType();
+                        switch (lType) {
+                            case ArrowDown -> y += 1;
+                            case ArrowUp -> y -= 1;
+                            case ArrowLeft -> x -= 1;
+                            case ArrowRight -> x += 1;
+                        }
+
+                        if (wall.contains(new Position(x, y))) {
+                            continueReadingInput = false;
+                            System.out.println("Death");
+                            latestKeyStroke = null;
+                        } else if (snake.contains(new Position(x,y))){
+                            continueReadingInput = false;
+                            System.out.println("Death");
+                        } else if (snake.contains(tarPos)) {
+                            snake.add(0,new Position(x,y));
+                            setPutSnakehead(snake, snakeHead);
+                            tarPos = new Position(r.nextInt(16,78), r.nextInt(1,22));
+                            terminal.setCursorPosition(tarPos.x,tarPos.y);
+                            terminal.putCharacter(target);
+                            terminal.setCursorPosition(8,1);
+                            terminal.putCharacter(point);
+                            cPoint++;
+                            point = (char)cPoint;
+                        } else {
+                            snake.add(0,new Position(x,y));
+                            setPutSnakehead(snake, snakeHead);
+                            terminal.setCursorPosition(snake.get(snake.size()-1));
+                            terminal.putCharacter(' ');
+                            snake.remove(snake.size()-1);
+                        }
+                        terminal.flush();
+                    }
+                }
                 Thread.sleep(5); // might throw InterruptedException
                 keyStroke = terminal.pollInput();
             } while (keyStroke == null);
-            KeyType type = keyStroke.getKeyType();
+            latestKeyStroke = keyStroke;
             Character c = keyStroke.getCharacter();
 
-            int oldX = x;
-            int oldY = y;
-            switch (type) {
-                case ArrowDown -> y += 1;
-                case ArrowUp -> y -= 1;
-                case ArrowLeft -> x -= 1;
-                case ArrowRight -> x += 1;
-            }
-
-            if (wall.contains(new Position(x,y))){
-                x = oldX;
-                y = oldY;
-                terminal.setCursorPosition(snake.get(1));
-                terminal.putCharacter(snakeHead);
-            } else if (snake.contains(tarPos)) {
-                snake.add(0,new Position(x,y));
-                setPutSnakehead(snake, snakeHead);
-                tarPos = new Position(r.nextInt(16,78), r.nextInt(1,22));
-                terminal.setCursorPosition(tarPos.x,tarPos.y);
-                terminal.putCharacter(target);
-                terminal.setCursorPosition(7,1);
-                terminal.putCharacter(point);
-                cPoint++;
-                point = (char)cPoint;
-            } else {
-                snake.add(0,new Position(x,y));
-                setPutSnakehead(snake, snakeHead);
-                terminal.setCursorPosition(snake.get(snake.size()-1));
-                terminal.putCharacter(' ');
-                snake.remove(snake.size()-1);
-            }
+//            KeyType type = keyStroke.getKeyType();
+//            int oldX = x;
+//            int oldY = y;
+//            switch (type) {
+//                case ArrowDown -> y += 1;
+//                case ArrowUp -> y -= 1;
+//                case ArrowLeft -> x -= 1;
+//                case ArrowRight -> x += 1;
+//            }
+//
+//            if (wall.contains(new Position(x, y))) {
+//                x = oldX;
+//                y = oldY;
+//                terminal.setCursorPosition(snake.get(1));
+//                terminal.putCharacter(snakeHead);
+//                continueReadingInput = false;
+//                System.out.println("Death");
+//            } else if (snake.contains(new Position(x,y))){
+//                continueReadingInput = false;
+//                System.out.println("Death");
+//            } else if (snake.contains(tarPos)) {
+//                snake.add(0,new Position(x,y));
+//                setPutSnakehead(snake, snakeHead);
+//                tarPos = new Position(r.nextInt(16,78), r.nextInt(1,22));
+//                terminal.setCursorPosition(tarPos.x,tarPos.y);
+//                terminal.putCharacter(target);
+//                terminal.setCursorPosition(8,1);
+//                terminal.putCharacter(point);
+//                cPoint++;
+//                point = (char)cPoint;
+//            } else {
+//                snake.add(0,new Position(x,y));
+//                setPutSnakehead(snake, snakeHead);
+//                terminal.setCursorPosition(snake.get(snake.size()-1));
+//                terminal.putCharacter(' ');
+//                snake.remove(snake.size()-1);
+//            }
             if (c == Character.valueOf('q')) {
                 continueReadingInput = false;
                 System.out.println("QUIT");
+                terminal.close();
             }
             terminal.flush();
         }
-        terminal.close();
+
     }
 
     private static void setPutSnakehead(List<Position> snake, char snakeHead) throws IOException {
