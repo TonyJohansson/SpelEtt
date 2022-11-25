@@ -73,7 +73,6 @@ public class Main  {
                             case ArrowLeft -> x -= 1;
                             case ArrowRight -> x += 1;
                         }
-
                         if (wall.contains(new Position(x, y))) {
                             continueReadingInput = false;
                             System.out.println("Death");
