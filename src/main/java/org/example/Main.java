@@ -43,6 +43,8 @@ public class Main  {
         String lose = "GAME OVER";
         String creator = "Creators:";
         String names = "Mia, Martin, Tony";
+        String love = "Du är fin idag";
+        List<String> printLove = List.of(love.split(" "));
         terminal.setCursorVisible(false);
         Random r = new Random();
         List<Position> wall = new ArrayList<>();
@@ -53,6 +55,7 @@ public class Main  {
         terminal.setForegroundColor(GREEN);
         printScore(s);
         terminal.setForegroundColor(YELLOW);
+        printLove(printLove);
         terminal.setCursorPosition(tarPos.x, tarPos.y);
         terminal.putCharacter(target);
         terminal.setForegroundColor(RED);
@@ -144,6 +147,29 @@ public class Main  {
             terminal.flush();
         }
 
+    }
+
+    private static void printLove(List<String> printnames) throws IOException {
+        for (int i = 0; i < printnames.get(0).length(); i++) {
+            terminal.setCursorPosition(i+4, 19);
+            terminal.setForegroundColor(YELLOW);
+            terminal.putCharacter(printnames.get(0).charAt(i));
+        }
+        for (int i = 0; i < printnames.get(1).length(); i++) {
+            terminal.setCursorPosition(i+4, 20);
+            terminal.setForegroundColor(YELLOW);
+            terminal.putCharacter(printnames.get(1).charAt(i));
+        }
+        for (int i = 0; i < printnames.get(2).length(); i++) {
+            terminal.setCursorPosition(i+4, 21);
+            terminal.setForegroundColor(YELLOW);
+            terminal.putCharacter(printnames.get(2).charAt(i));
+        }
+        for (int i = 0; i < printnames.get(3).length(); i++) {
+            terminal.setCursorPosition(i+4, 22);
+            terminal.setForegroundColor(YELLOW);
+            terminal.putCharacter(printnames.get(3).charAt(i));
+        }
     }
 
     private static void printGameOver(String lose, String creator,String names) throws IOException {
