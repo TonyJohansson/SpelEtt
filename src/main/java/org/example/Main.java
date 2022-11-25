@@ -35,7 +35,7 @@ public class Main  {
         final char target = '\u2666' ;  // '\u2766'☃
         final char block = '\u2588';
         boolean continueReadingInput = true;
-        String s = "SCORE 0";
+        String s = "SCORE  0";
         terminal.setCursorVisible(false);
         List<Position> wall = new ArrayList<>();
         List<Position> snake = new ArrayList<>(Arrays.asList(new Position(x,y),new Position(x-1,y), new Position(x-2,y)));
@@ -76,8 +76,7 @@ public class Main  {
                 terminal.putCharacter(snakeHead);
             } else if (snake.contains(tarPos)) {
                 snake.add(0,new Position(x,y));
-                terminal.setCursorPosition(snake.get(0));
-                terminal.putCharacter(snakeHead);
+                setPutSnakehead(snake, snakeHead);
                 tarPos = new Position(r.nextInt(16,78), r.nextInt(1,22));
                 terminal.setCursorPosition(tarPos.x,tarPos.y);
                 terminal.putCharacter(target);
@@ -85,11 +84,9 @@ public class Main  {
                 terminal.putCharacter(point);
                 cPoint++;
                 point = (char)cPoint;
-
             } else {
                 snake.add(0,new Position(x,y));
-                terminal.setCursorPosition(snake.get(0));
-                terminal.putCharacter(snakeHead);
+                setPutSnakehead(snake, snakeHead);
                 terminal.setCursorPosition(snake.get(snake.size()-1));
                 terminal.putCharacter(' ');
                 snake.remove(snake.size()-1);
@@ -101,6 +98,11 @@ public class Main  {
             terminal.flush();
         }
         terminal.close();
+    }
+
+    private static void setPutSnakehead(List<Position> snake, char snakeHead) throws IOException {
+        terminal.setCursorPosition(snake.get(0));
+        terminal.putCharacter(snakeHead);
     }
 
     private static void printScore(String s) throws IOException {
