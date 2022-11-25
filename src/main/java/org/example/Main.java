@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import static com.googlecode.lanterna.TextColor.ANSI.*;
+
 public class Main  {
     static DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory();
     static Terminal terminal;
@@ -36,21 +38,24 @@ public class Main  {
         final char block = '\u2588';
         KeyStroke latestKeyStroke = null;
         boolean continueReadingInput = true;
-        String s = "SCORE  0";
+        String s = "SCORE 000";
         terminal.setCursorVisible(false);
         Random r = new Random();
         List<Position> wall = new ArrayList<>();
         List<Position> snake = new ArrayList<>(List.of(new Position(x, y)));
-
-
-
         Position tarPos = new Position(r.nextInt(16,78), r.nextInt(1,22));
+        Position tarPos2 = new Position(r.nextInt(16,78), r.nextInt(1,22));
+
+
+        printWall(wall,block);
+        terminal.setForegroundColor(GREEN);
+        printScore(s);
+        terminal.setForegroundColor(YELLOW);
         terminal.setCursorPosition(tarPos.x, tarPos.y);
         terminal.putCharacter(target);
-
-        printScore(s);
-        printWall(wall,block);
+        terminal.setForegroundColor(RED);
         printSnake(snake, snakeHead);
+
 
 
         while (continueReadingInput) {
@@ -80,10 +85,13 @@ public class Main  {
                             snake.add(0,new Position(x,y));
                             setPutSnakehead(snake, snakeHead);
                             tarPos = new Position(r.nextInt(16,78), r.nextInt(1,22));
+                            terminal.setForegroundColor(YELLOW);
                             terminal.setCursorPosition(tarPos.x,tarPos.y);
                             terminal.putCharacter(target);
-                            terminal.setCursorPosition(8,1);
+                            terminal.setForegroundColor(GREEN);
+                            terminal.setCursorPosition(9,1);
                             terminal.putCharacter(point);
+                            terminal.setForegroundColor(RED);
                             cPoint++;
                             point = (char)cPoint;
                         } else {
