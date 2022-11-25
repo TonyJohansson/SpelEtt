@@ -27,7 +27,7 @@ public class Main  {
 
         int x = 20;
         int y = 20;
-        int moduloMod = 25;
+        int speed = 25;
         int hundratal = '1';
         int tiotal = '1';
         int ental = '1';
@@ -63,7 +63,7 @@ public class Main  {
             KeyStroke keyStroke = null;
             do {
                 index++;
-                if (index % moduloMod == 0) {
+                if (index % speed == 0) {
                     if (latestKeyStroke != null) {  // Autowalk
                         KeyType lType = latestKeyStroke.getKeyType();
                         switch (lType) {
@@ -94,11 +94,11 @@ public class Main  {
                             terminal.setForegroundColor(RED);
                             if ((char)ental == '9') {
                                 ental = '/';
-                                if(moduloMod > 10){
-                                    moduloMod-=5;
-                                }
                             }
                             if (ental == '0') {
+                                if(speed > 10){
+                                    speed-=5;
+                                }
                                 if ((char)tiotal == '9') {
                                     tiotal = '/';
                                 }
